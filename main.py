@@ -119,6 +119,7 @@ def startup():
 @app.get("/")
 def index(request: Request):
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
             "request": request,
@@ -145,6 +146,7 @@ def search(request: Request, city: str = Form(...)):
             save_search(result)
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
             "request": request,
