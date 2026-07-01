@@ -47,7 +47,7 @@
             </section>
         {% endif %}
 
-        <section class="history"
+        <section class="history">
             <div class="history-header">
                 <h3>Last {{ history|length }} Search{{ 'es' if history|length != 1 else '' }}</h3>
                 {% if history %}
@@ -55,27 +55,33 @@
                 {% endif %}
             </div>
 
-        {% if history %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>City</th>
-                        <th>Temperature (&deg;C)</th>
-                        <th>Description</th>
-                        <th>Searched At (UTC)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in history %}
-                    <tr>
-                        <td>{{ item.city }}{% if item.country %}, {{ item.country }}{% endif %}</td>
-                        <td>{{ "%.2f|format(item.temperature) }}</td>
-                        <td>{{ item.description }}</td>
-                        <td>{{ item.searched_at.replace("T", " ") }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if history %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>City</th>
+                            <th>Temperature (&deg;C)</th>
+                            <th>Description</th>
+                            <th>Searched At (UTC)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in history %}
+                        <tr>
+                            <td>{{ item.city }}{% if item.country %}, {{ item.country }}{% endif %}</td>
+                            <td>{{ "%.2f|format(item.temperature) }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.searched_at.replace("T", " ") }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <canvas id="historyChart" height="150"></canvas>
+            {% else %}
+                <p class="muted">No searches yet.</p>
+            {% endif %}
+        </section>
     </main>
 </body>
 </html>
