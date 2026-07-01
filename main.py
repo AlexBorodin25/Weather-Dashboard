@@ -1,4 +1,9 @@
 import sqlite3
+import os
+from contextlib import contextmanager
+from datetime import datetime
+
+from jupyterlab_widgets import data
 
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
 
@@ -26,4 +31,34 @@ def init_db():
             wind_speed REAL,
             searched_at TEXT NOT NULL,)
             """
+        )
+
+def save_search(data: dict:):
+    with get_db() as conn:
+        conn.execute(
+            """
+            INSERT INTO searches 
+                (city, country, temperature, humidity, feels_like, description, 
+                                  icon, wind_speed, searched_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                data['city'],
+                data['country'],
+                data['temperature'],
+                data['humidity'],
+                data['feels_like'],
+                data['description'],
+                data['icon'],
+                data['wind_speed'],
+                datetime.utcnow().isoformat(timespec='seconds'),
+            ),
+        )
+        conn.execute(
+            """
+            DELETE FROM searches
+            WHERE id NOT IN (
+                SELECT id FROM searches OWNER BY id DESC LIMIT ?)
+            """,
+            (MAX_HISTORY,),
         )
