@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
 MAX_HISTORY = 5
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
-OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
+OPENWEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 app = FastAPI(title="Weather App")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
