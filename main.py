@@ -117,3 +117,30 @@ def index(request: Request):
             "history": get_history(),
         },
     )
+
+@app.post("/")
+def search(request: Request, city: str = Form(...)):
+    city = city.strip()
+    weather = None
+    error = None
+
+    if not city:
+        error = "City is required."
+    else:
+        result = fetch_weather(city)
+        if "error" in result:
+            error = result["error"]
+        else:
+            weather = result
+            save_search(result)
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "weather": weather,
+            "error": error,
+            "history": get_history(),
+        },
+    )
+
