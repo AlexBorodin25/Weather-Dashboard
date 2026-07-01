@@ -17,8 +17,9 @@ OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 app = FastAPI(title="Weather App")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
+@contextmanager
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -41,11 +42,11 @@ def init_db():
             description TEXT,
             icon TEXT,
             wind_speed REAL,
-            searched_at TEXT NOT NULL,)
+            searched_at TEXT NOT NULL)
             """
         )
 
-def save_search(data: dict:):
+def save_search(data: dict):
     with get_db() as conn:
         conn.execute(
             """
@@ -70,7 +71,7 @@ def save_search(data: dict:):
             """
             DELETE FROM searches
             WHERE id NOT IN (
-                SELECT id FROM searches OWNER BY id DESC LIMIT ?)
+                SELECT id FROM searches ORDER BY id DESC LIMIT ?)
             """,
             (MAX_HISTORY,),
         )
