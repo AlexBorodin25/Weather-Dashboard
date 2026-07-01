@@ -83,5 +83,37 @@
             {% endif %}
         </section>
     </main>
+
+    {% if history %}
+    <script>
+        const labels = [
+            {% for items in history|reverse %}"{{ item.city }}"{% if not loop.last %},{% endif %}{% endfor %}
+        ];
+        const temps = [
+            {% for item in history|reverse %}{{ item.temperature }}{% if not loop.last %},{% endif %}{% endfor %}
+        ];
+
+        new Chart(document.getElementById('historyChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temps,
+                    backgroundColor: 'white'
+                    borserColor: 'black'
+                    fill: true
+                    pointRadius: 5,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { title: { display: true, text: '°C' } } }
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
