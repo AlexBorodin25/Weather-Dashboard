@@ -11,7 +11,7 @@
     <main class="container">
         <h1>Weather Dashboard</h1>
 
-        <form method="postd" action="/" class="search-form">
+        <form method="post" action="/" class="search-form">
             <input
                 type="text"
                 name="city"
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <ul class="weather-info">
-                    <li>Feels like: {{ "%.2f|format(weather.feels_like) }}&deg;C</li>
+                    <li>Feels like: {{ "%.2f"|format(weather.feels_like) }}&deg;C</li>
                     <li>Humidity: {{ weather.humidity }}%</li>
                     <li>Wind speed: {{ weather.wind_speed }}</li>
                 </ul>
@@ -87,7 +87,7 @@
     {% if history %}
     <script>
         const labels = [
-            {% for items in history|reverse %}"{{ item.city }}"{% if not loop.last %},{% endif %}{% endfor %}
+            {% for item in history|reverse %}"{{ item.city }}"{% if not loop.last %},{% endif %}{% endfor %}
         ];
         const temps = [
             {% for item in history|reverse %}{{ item.temperature }}{% if not loop.last %},{% endif %}{% endfor %}
