@@ -91,3 +91,15 @@ def fetch_weather(city: str) -> dict:
     if resp.status_code != 200:
         return {"error": f"API error: {resp.status_code}"}
 
+    payload = resp.json()
+    return {
+        "city": payload.get("name", city),
+        "country": payload.get("sys", {}).get("country", ""),
+        "temperature": payload["main"]["temp"],
+        "humidity": payload["main"]["humidity"],
+        "feels_like": payload["main"]["feels_like"],
+        "description": payload["weather"][0]["description"].title(),
+        "icon": payload["weather"][0]["icon"],
+        "wind_speed": payload["wind"]["speed"],
+    }
+
