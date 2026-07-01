@@ -2,8 +2,7 @@ import sqlite3
 import os
 from contextlib import contextmanager
 from datetime import datetime
-
-
+from urllib.request import Request
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
@@ -103,3 +102,18 @@ def fetch_weather(city: str) -> dict:
         "wind_speed": payload["wind"]["speed"],
     }
 
+@app.on_event("startup")
+def startup():
+    init_db()
+
+@app.get("/")
+def index(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "weather": None,
+            "error": None,
+            "history": get_history(),
+        },
+    )
