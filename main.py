@@ -2,9 +2,9 @@ import sqlite3
 import os
 from contextlib import contextmanager
 from datetime import datetime
-from urllib.request import Request
 
-from fastapi import FastAPI
+import requests
+from fastapi import FastAPI, Form, Request
 from starlette.responses import RedirectResponse
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
