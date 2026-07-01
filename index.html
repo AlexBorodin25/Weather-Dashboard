@@ -45,6 +45,15 @@
                     <li>Wind speed: {{ weather.wind_speed }}</li>
                 </ul>
             </section>
+        {% endif %}
+
+        <section class="history"
+            <div class="history-header">
+                <h3>Last {{ history|length }} Search{{ 'es' if history|length != 1 else '' }}</h3>
+                {% if history %}
+                    <a href="/clear" class="clear-link">Clear history</a>
+                {% endif %}
+            </div>
     </main>
 </body>
 </html>
