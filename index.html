@@ -2,9 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 </head>
 <body>
+    <main class="container">
+        <h1>Weather Dashboard</h1>
 
+        <form method="postd" action="/" class="search-form">
+            <input
+                type="text"
+                name="city"
+                placeholder="Enter city name"
+                autocomplete="off"
+                required
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        {% if error%}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if weather %}
+            <section class="weather-card">
+                <div class="weather-main">
+                    <img
+                        src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png"
+                        alt="{{ weather.description }}"
+                    >
+                    <div>
+                        <h2>{{weather.city}}{% if weather.country %}, {{weather.country }}{% endif %}</h2>
+                        <p class="temperature">{{ "%.2f"|format(weather.temperature) }}&deg;C</p>
+                        <p class="description">{{ weather.description }}</p>
+                    </div>
+                </div>
+                <ul class="weather-info">
+                    <li>Feels like: {{ "%.2f|format(weather.feels_like) }}&deg;C</li>
+                    <li>Humidity: {{ weather.humidity }}%</li>
+                    <li>Wind speed: {{ weather.wind_speed }}</li>
+                </ul>
+            </section>
+    </main>
 </body>
 </html>
