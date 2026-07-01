@@ -3,9 +3,11 @@ import os
 from contextlib import contextmanager
 from datetime import datetime
 
-from jupyterlab_widgets import data
+
+
 
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
+MAX_HISTORY = 5
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -62,3 +64,10 @@ def save_search(data: dict:):
             """,
             (MAX_HISTORY,),
         )
+
+def get_history():
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM searches ORDER BY id DESC LIMIT ?", (MAX_HISTORY,)
+        ).fetchall()
+        return [dict(row) for row in rows]
