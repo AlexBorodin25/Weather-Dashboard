@@ -54,6 +54,28 @@
                     <a href="/clear" class="clear-link">Clear history</a>
                 {% endif %}
             </div>
+
+        {% if history %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Temperature (&deg;C)</th>
+                        <th>Description</th>
+                        <th>Searched At (UTC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history %}
+                    <tr>
+                        <td>{{ item.city }}{% if item.country %}, {{ item.country }}{% endif %}</td>
+                        <td>{{ "%.2f|format(item.temperature) }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.searched_at.replace("T", " ") }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
     </main>
 </body>
 </html>
