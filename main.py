@@ -4,11 +4,20 @@ from contextlib import contextmanager
 from datetime import datetime
 from urllib.request import Request
 
+from fastapi import FastAPI
+from starlette.responses import RedirectResponse
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
 MAX_HISTORY = 5
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
 OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
+
+app = FastAPI(title="Weather App")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static"), name="static")
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -144,3 +153,8 @@ def search(request: Request, city: str = Form(...)):
         },
     )
 
+@app.get("/clear")
+def clear_history():
+    with get_db() as conn:
+        conn.execute("DELETE FROM searches")
+    return RedirectResponse(url="/", status_code=303)
