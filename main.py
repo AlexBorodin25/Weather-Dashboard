@@ -5,9 +5,11 @@ from datetime import datetime
 
 
 
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "weather.db")
 MAX_HISTORY = 5
+OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
+OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -71,3 +73,21 @@ def get_history():
             "SELECT * FROM searches ORDER BY id DESC LIMIT ?", (MAX_HISTORY,)
         ).fetchall()
         return [dict(row) for row in rows]
+
+def fetch_weather(city: str) -> dict:
+    if not OPENWEATHER_API_KEY:
+        return {"error": "API key is missing. Set it as an environment variable."}
+
+    params = {"q": city, "appid": OPENWEATHER_API_KEY, "units": "metric"}
+    try:
+        resp = requests.get(OPENWEATHER_URL, params=params, timeout=10)
+    except requests.RequestException as exc:
+        return {"error": f"Could not reach OpenWeather: {exc}"}
+
+    if resp.status_code == 404:
+        return {"error": f"City '{city}' not found"}
+    if resp.status_code == 401:
+        return {"error": "API key is invalid."}
+    if resp.status_code != 200:
+        return {"error": f"API error: {resp.status_code}"}
+
