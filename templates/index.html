@@ -22,7 +22,7 @@
             <button type="submit">Search</button>
         </form>
 
-        {% if error%}
+        {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
 
@@ -34,7 +34,7 @@
                         alt="{{ weather.description }}"
                     >
                     <div>
-                        <h2>{{weather.city}}{% if weather.country %}, {{weather.country }}{% endif %}</h2>
+                        <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
                         <p class="temperature">{{ "%.2f"|format(weather.temperature) }}&deg;C</p>
                         <p class="description">{{ weather.description }}</p>
                     </div>
@@ -69,7 +69,7 @@
                         {% for item in history %}
                         <tr>
                             <td>{{ item.city }}{% if item.country %}, {{ item.country }}{% endif %}</td>
-                            <td>{{ "%.2f|format(item.temperature) }}</td>
+                            <td>{{ "%.2f"|format(item.temperature) }}</td>
                             <td>{{ item.description }}</td>
                             <td>{{ item.searched_at.replace("T", " ") }}</td>
                         </tr>
