@@ -90,5 +90,41 @@ h1 {
 }
 
 .weather-details {
-
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--muted);
 }
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clear-link {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.clear-link:hover { color: var(--error); }
+
+table {
+    border-collapse: collapse;
+    margin: 5px;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 3px;
+    font-size: 0.9rem;
+}
+
+th { color: var(--muted); }
+
+.muted { color: var(--muted); }
