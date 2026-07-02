@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 from datetime import datetime
 
 import requests
@@ -15,6 +15,10 @@ MAX_HISTORY = 5
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
 OPENWEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
 app = FastAPI(title="Weather App")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
@@ -112,9 +116,6 @@ def fetch_weather(city: str) -> dict:
         "wind_speed": payload["wind"]["speed"],
     }
 
-@app.on_event("startup")
-def startup():
-    init_db()
 
 @app.get("/")
 def index(request: Request):
