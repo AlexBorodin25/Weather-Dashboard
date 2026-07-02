@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.venv/
+venv/
+weather.db
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
