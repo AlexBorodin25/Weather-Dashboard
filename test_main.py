@@ -1,15 +1,17 @@
 import sqlite3
 
+import anyio
 import pytest
 import requests
 from fastapi.testclient import TestClient
+
 
 import main as app_module
 
 @pytest.fixture
 def test_db(tmp_path,monkeypatch):
     test_db_path = tmp_path / "test_weather.db"
-    monkeypatch.setattr(app_module, "DB_FILE", str(test_db_path))
+    monkeypatch.setattr(app_module, "DB_PATH", str(test_db_path))
     app_module.init_db()
     return test_db_path
 
@@ -17,16 +19,40 @@ def test_db(tmp_path,monkeypatch):
 def client(test_db):
     return TestClient(app_module.app)
 
-@def test_get_db_connection(test_db):
-    with app.module.get_db() as conn:
+def test_get_db_connection(test_db):
+    with app_module.get_db() as conn:
         assert isinstance(conn, sqlite3.Connection)
         assert conn.row_factory == sqlite3.Row
 
 def test_init_db_creates_table(test_db):
     with app_module.get_db() as conn:
-        results = conn.execute(
+        result = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='searches'"
         ).fetchone()
 
         assert result is not None
-        assert results["name"] == "searches"
+        assert result["name"] == "searches"
+
+def test_save_search_weather_data(test_db):
+    weather_data = {
+        "city": "London",
+        "country": "UK",
+        "temperature": 31.83,
+        "humidity": 29,
+        "feels_like": 30.52,
+        "description": "Scattered Clouds",
+        "icon": "o1d",
+        "wind_speed": 3.13,
+    }
+
+    app_module.save_search(weather_data)
+
+    history = app_module.get_history()
+
+    assert len(history) == 1
+    assert history[0]["city"] == "London"
+    assert history[0]["country"] == "UK"
+    assert history[0]["temperature"] == 31.83
+    assert history[0]["humidity"] == 29
+    assert history[0]["feels_like"] == 30.52
+    assert history[0]["description"] == "Scattered Clouds"
