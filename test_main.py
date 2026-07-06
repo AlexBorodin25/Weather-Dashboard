@@ -89,3 +89,15 @@ def test_missing_API_key(monkeypatch):
     result = app_module.fetch_weather("London")
 
     assert result["error"] == "API key is missing. Set it as an environment variable."
+
+def test_fetch_weather_request_error(monkeypatch):
+    def fake_get(*args, **kwargs):
+        raise requests.RequestException("Network error")
+
+    monkeypatch.setattr(app_module, "OPENWEATHER_API_KEY", "fake-key")
+    monkeypatch.setattr(app_module.requests, "get", fake_get)
+
+    result = app_module.fetch_weather("London")
+
+    assert "Could not reach OpenWeather" in result["error"]
+
