@@ -197,3 +197,12 @@ def test_index_shows_history(client):
     assert "31.83" in response.text
     assert "Scattered Clouds" in response.text
     assert "Clear History" in response.text
+
+def test_search_empty_city(client):
+    response = client.get("/", data={"city": "   "})
+
+    assert response.status_code == 200
+    assert "City is required." in response.text
+
+def test_search_API_error(client, monkeypatch):
+    monkeypatch.setattr(app_module, "fetch_weather", lambda city: {"error": "City not found"})
