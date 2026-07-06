@@ -77,3 +77,15 @@ def test_save_search_max_history(test_db):
     assert len(history) == app_module.MAX_HISTORY
     assert history[0]["city"] == "City 4"
     assert history[-1]["city"] == "City 0"
+
+def test_history_empty_list(test_db):
+    history = app_module.get_history()
+
+    assert history == []
+
+def test_missing_API_key(monkeypatch):
+    monkeypatch.setattr(app_module, "OPENWEATHER_API_KEY", "")
+
+    result = app_module.fetch_weather("London")
+
+    assert result["error"] == "API key is missing. Set it as an environment variable."
