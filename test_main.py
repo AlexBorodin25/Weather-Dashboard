@@ -206,3 +206,33 @@ def test_search_empty_city(client):
 
 def test_search_API_error(client, monkeypatch):
     monkeypatch.setattr(app_module, "fetch_weather", lambda city: {"error": "City not found"})
+
+    response = client.get("/", data={"city": "Unknown"})
+
+    assert response.status_code == 200
+    assert "City not found." in response.text
+
+def test_search_success(client, monkeypatch):
+    fake_weather = {
+        "city": "London",
+        "country": "UK",
+        "temperature": 31.83,
+        "humidity": 29,
+        "feels_like": 30.52,
+        "description": "Scattered Clouds",
+        "icon": "o1d",
+        "wind_speed": 3.13,
+    }
+
+    monkeypatch.setattr(app_module, "fetch_weather", lambda city: fake_weather)
+
+    response = client.get("/", data={"city": "London"})
+
+    assert response.status_code == 200
+    assert "London, UK" in response.text
+    assert "31.83" in response.text
+    assert "Scattered Clouds" in response.text
+    assert "Humidity: 29%" in response.text
+    assert "Wind speed: 3.13" in response.text
+    assert "Last 1 Search" in response.text
+
