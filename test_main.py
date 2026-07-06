@@ -166,3 +166,34 @@ def test_fetch_weather(monkeypatch):
     assert result["description"] == "Scattered Clouds"
     assert result["icon"] == "o1d"
     assert result["wind_speed"] == 3.13
+
+def test_index_renders_html(client):
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "Weather Dashboard" in response.text
+    assert "Enter city name" in response.text
+    assert "No searches yet." in response.text
+
+def test_index_shows_history(client):
+    app_module.save_search(
+        {
+            "city": "London",
+            "country": "UK",
+            "temperature": 31.83,
+            "humidity": 29,
+            "feels_like": 30.52,
+            "description": "Scattered Clouds",
+            "icon": "o1d",
+            "wind_speed": 3.13,
+        }
+    )
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "Last 1 Search" in response.text
+    assert "London, UK" in response.text
+    assert "31.83" in response.text
+    assert "Scattered Clouds" in response.text
+    assert "Clear History" in response.text
