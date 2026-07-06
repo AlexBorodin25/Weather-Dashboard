@@ -131,7 +131,7 @@ def test_fetch_weather(monkeypatch):
             return {
                 "name": "London",
                 "sys": {"country": "UK"},
-                "main" {
+                "main": {
                     "temp": 31.83,
                     "humidity": 29,
                     "feels_like": 30.52,
@@ -196,10 +196,10 @@ def test_index_shows_history(client):
     assert "London, UK" in response.text
     assert "31.83" in response.text
     assert "Scattered Clouds" in response.text
-    assert "Clear History" in response.text
+    assert "Clear history" in response.text
 
 def test_search_empty_city(client):
-    response = client.get("/", data={"city": "   "})
+    response = client.post("/", data={"city": "   "})
 
     assert response.status_code == 200
     assert "City is required." in response.text
@@ -207,10 +207,10 @@ def test_search_empty_city(client):
 def test_search_API_error(client, monkeypatch):
     monkeypatch.setattr(app_module, "fetch_weather", lambda city: {"error": "City not found"})
 
-    response = client.get("/", data={"city": "Unknown"})
+    response = client.post("/", data={"city": "Unknown"})
 
     assert response.status_code == 200
-    assert "City not found." in response.text
+    assert "City not found" in response.text
 
 def test_search_success(client, monkeypatch):
     fake_weather = {
@@ -226,7 +226,7 @@ def test_search_success(client, monkeypatch):
 
     monkeypatch.setattr(app_module, "fetch_weather", lambda city: fake_weather)
 
-    response = client.get("/", data={"city": "London"})
+    response = client.post("/", data={"city": "London"})
 
     assert response.status_code == 200
     assert "London, UK" in response.text
