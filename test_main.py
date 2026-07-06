@@ -111,3 +111,14 @@ def fetch_weather_invalid_API_key(monkeypatch):
     result = app_module.fetch_weather("London")
 
     assert result["error"] == "API key is invalid."
+
+def fetch_weather_city_not_founds(monkeypatch):
+    class FakeResponse:
+        status_code = 404
+
+    monkeypatch.setattr(app_module, "OPENWEATHER_API_KEY", "fake-key")
+    monkeypatch.setattr(app_module.requests, "get", lambda *args, **kwargs: FakeResponse())
+
+    result = app_module.fetch_weather("FakeCity")
+
+    assert result["error"] == "City 'FakeCity' not found."
