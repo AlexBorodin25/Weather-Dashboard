@@ -122,3 +122,47 @@ def fetch_weather_city_not_founds(monkeypatch):
     result = app_module.fetch_weather("FakeCity")
 
     assert result["error"] == "City 'FakeCity' not found."
+
+def test_fetch_weather(monkeypatch):
+    class FakeResponse:
+        status_code = 200
+
+        def json(self):
+            return {
+                "name": "London",
+                "sys": {"country": "UK"},
+                "main" {
+                    "temp": 31.83,
+                    "humidity": 29,
+                    "feels_like": 30.52,
+                },
+                "weather": [
+                    {
+                        "description": "Scattered Clouds",
+                        "icon": "o1d",
+                    }
+                ],
+                "wind": {"speed": 3.13},
+            }
+
+    def fake_get(url, params, timeout):
+        assert url == app_module.OPENWEATHER_URL
+        assert params["q"] == "London"
+        assert params["units"] == "metric"
+        assert params["appid"] == "fake-key"
+        assert timeout == 10
+        return FakeResponse()
+
+    monkeypatch.setattr(app_module, "OPENWEATHER_API_KEY", "fake-key")
+    monkeypatch.setattr(app_module.requests, "get", fake_get)
+
+    result = app_module.fetch_weather("London")
+
+    assert result["city"] == "London"
+    assert result["country"] == "UK"
+    assert result["temperature"] == 31.83
+    assert result["humidity"] == 29
+    assert result["feels_like"] == 30.52
+    assert result["description"] == "Scattered Clouds"
+    assert result["icon"] == "o1d"
+    assert result["wind_speed"] == 3.13
