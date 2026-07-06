@@ -56,3 +56,24 @@ def test_save_search_weather_data(test_db):
     assert history[0]["humidity"] == 29
     assert history[0]["feels_like"] == 30.52
     assert history[0]["description"] == "Scattered Clouds"
+
+def test_save_search_max_history(test_db):
+    for number in range(5):
+        app_module.save_search(
+            {
+                "city": f"City {number}",
+                "country": "UK",
+                "temperature": 31.83,
+                "humidity": 29,
+                "feels_like": 30.52,
+                "description": "Scattered Clouds",
+                "icon": "o1d",
+                "wind_speed": 3.13,
+            }
+        )
+
+    history = app_module.get_history()
+
+    assert len(history) == app_module.MAX_HISTORY
+    assert history[0]["city"] == "City 4"
+    assert history[-1]["city"] == "City 0"
