@@ -19,7 +19,7 @@ OPENWEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 async def lifespan(app: FastAPI):
     init_db()
     yield
-app = FastAPI(title="Weather App")
+app = FastAPI(title="Weather App", lifespan=lifespan)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
