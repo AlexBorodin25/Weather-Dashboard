@@ -101,7 +101,7 @@ def test_fetch_weather_request_error(monkeypatch):
 
     assert "Could not reach OpenWeather" in result["error"]
 
-def fetch_weather_invalid_API_key(monkeypatch):
+def test_fetch_weather_invalid_API_key(monkeypatch):
     class FakeResponse:
         status_code = 401
 
@@ -112,7 +112,7 @@ def fetch_weather_invalid_API_key(monkeypatch):
 
     assert result["error"] == "API key is invalid."
 
-def fetch_weather_city_not_founds(monkeypatch):
+def test_fetch_weather_city_not_founds(monkeypatch):
     class FakeResponse:
         status_code = 404
 
