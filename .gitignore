@@ -217,3 +217,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Database files
+*.db
+weather.db
+
+# IDE/editor settings
+.idea/

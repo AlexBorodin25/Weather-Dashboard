@@ -15,13 +15,19 @@ MAX_HISTORY = 5
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
 OPENWEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     yield
-app = FastAPI(title="Weather App")
+
+
+app = FastAPI(title="Weather App", lifespan=lifespan)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+app.mount(
+    "/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static"
+)
+
 
 @contextmanager
 def get_db():
@@ -32,6 +38,7 @@ def get_db():
         conn.commit()
     finally:
         conn.close()
+
 
 def init_db():
     with get_db() as conn:
@@ -50,6 +57,7 @@ def init_db():
             """
         )
 
+
 def save_search(data: dict):
     with get_db() as conn:
         conn.execute(
@@ -60,15 +68,15 @@ def save_search(data: dict):
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                data['city'],
-                data['country'],
-                data['temperature'],
-                data['humidity'],
-                data['feels_like'],
-                data['description'],
-                data['icon'],
-                data['wind_speed'],
-                datetime.utcnow().isoformat(timespec='seconds'),
+                data["city"],
+                data["country"],
+                data["temperature"],
+                data["humidity"],
+                data["feels_like"],
+                data["description"],
+                data["icon"],
+                data["wind_speed"],
+                datetime.utcnow().isoformat(timespec="seconds"),
             ),
         )
         conn.execute(
@@ -80,12 +88,14 @@ def save_search(data: dict):
             (MAX_HISTORY,),
         )
 
+
 def get_history():
     with get_db() as conn:
         rows = conn.execute(
             "SELECT * FROM searches ORDER BY id DESC LIMIT ?", (MAX_HISTORY,)
         ).fetchall()
         return [dict(row) for row in rows]
+
 
 def fetch_weather(city: str) -> dict:
     if not OPENWEATHER_API_KEY:
@@ -130,6 +140,7 @@ def index(request: Request):
         },
     )
 
+
 @app.post("/")
 def search(request: Request, city: str = Form(...)):
     city = city.strip()
@@ -156,6 +167,7 @@ def search(request: Request, city: str = Form(...)):
             "history": get_history(),
         },
     )
+
 
 @app.get("/clear")
 def clear_history():
