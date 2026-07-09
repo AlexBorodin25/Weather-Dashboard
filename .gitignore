@@ -221,3 +221,6 @@ __marimo__/
 # Database files
 *.db
 weather.db
+
+# IDE/editor settings
+.idea/
